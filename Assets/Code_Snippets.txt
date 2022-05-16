@@ -1,0 +1,78 @@
+public delegate void AccelerometerChangedAction(Vector3 acceleration);
+public static event AccelerometerChangedAction OnAccelerometerChanged;
+
+--------------------------------------------------
+
+private Vector3 defaultAcceleration;
+
+--------------------------------------------------
+
+void OnEnable () {
+	defaultAcceleration = new Vector3(Input.acceleration.x, Input.acceleration.y, -1*Input.acceleration.z);
+}
+
+--------------------------------------------------
+
+if (OnAccelerometerChanged != null)
+{
+	Vector3 acceleration = new Vector3(Input.acceleration.x, Input.acceleration.y, -1*Input.acceleration.z);
+	acceleration -= defaultAcceleration;
+	OnAccelerometerChanged(acceleration);
+}
+
+--------------------------------------------------
+
+public bool useAccelerometer = false;
+
+--------------------------------------------------
+
+private void OnEnable()
+{
+	if (!useAccelerometer)
+	{
+		UserInputHandler.OnTap += TurnTowardsTouch;
+		UserInputHandler.OnPanBegan += StopTurn;
+		UserInputHandler.OnPanHeld += MoveTowardsTouch;
+	}
+	else
+	{
+		UserInputHandler.OnAccelerometerChanged += MoveWithAcceleration;
+		UserInputHandler.OnTap += TurnTowardsTouch;
+	}
+}
+
+private void OnDisable()
+{
+	if (!useAccelerometer)
+	{
+		UserInputHandler.OnTap -= TurnTowardsTouch;
+		UserInputHandler.OnPanBegan -= StopTurn;
+		UserInputHandler.OnPanHeld -= MoveTowardsTouch;
+	}
+	else
+	{
+		UserInputHandler.OnAccelerometerChanged -= MoveWithAcceleration;
+		UserInputHandler.OnTap -= TurnTowardsTouch;
+	}
+}
+
+--------------------------------------------------
+
+private void MoveWithAcceleration(Vector3 acceleration)
+{
+	if (!turning)
+	{
+		acceleration.z = 0;
+			
+		if (acceleration.sqrMagnitude >= 0.03f)
+		{
+			Vector3 targetPoint = transform.position + acceleration;
+				
+			rigidbody2D.AddForce(transform.forward * movementSpeed * Time.deltaTime);
+			TurnTowardsPointUpdate(targetPoint);	
+			
+		}
+	}
+}
+
+--------------------------------------------------

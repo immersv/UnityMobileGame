@@ -1,0 +1,50 @@
+public delegate void PanBeganAction(Touch t);
+public static event PanBeganAction OnPanBegan;
+
+public delegate void PanHeldAction(Touch t);
+public static event PanHeldAction OnPanHeld;
+
+public delegate void PanEndedAction(Touch t);
+public static event PanEndedAction OnPanEnded;
+
+--------------------------------------------------
+
+public float panMinTime = 0.4f;
+
+private float startTime;
+
+private bool panGestureRecognized = false;
+
+--------------------------------------------------
+
+startTime = Time.time;
+
+--------------------------------------------------
+
+if (!panGestureRecognized && Time.time - startTime > panMinTime)
+{
+	panGestureRecognized = true;
+	tapGestureFailed = true;
+
+	if (OnPanBegan != null)
+		OnPanBegan(touch);
+}
+else if (panGestureRecognized)
+{
+	if (OnPanHeld != null)
+		OnPanHeld(touch);
+}
+
+--------------------------------------------------
+
+if (panGestureRecognized)
+{
+	if (OnPanEnded != null)
+		OnPanEnded(touch);
+}
+
+--------------------------------------------------
+
+panGestureRecognized = false;
+
+--------------------------------------------------

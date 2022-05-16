@@ -1,0 +1,46 @@
+UserInputHandler.OnPanBegan += StopTurn;
+
+--------------------------------------------------
+
+UserInputHandler.OnPanBegan -= StopTurn;
+
+--------------------------------------------------
+
+private void StopTurn(Touch t)
+{
+	StopCoroutine(TURN_COROUTINE_NAME);
+	turning = false;
+}
+
+--------------------------------------------------
+
+private void MoveTowardsTouch(Touch t)
+{
+	Vector3 targetPoint = Camera.main.ScreenToWorldPoint(t.position);
+		
+	rigidbody2D.AddForce(transform.forward * movementSpeed * Time.deltaTime);
+	TurnTowardsPointUpdate(targetPoint);
+}
+
+--------------------------------------------------
+
+private void TurnTowardsPointUpdate(Vector3 point)
+{
+	point = point - transform.position;
+	point.z = transform.position.z;
+		
+	Quaternion startRotation = transform.rotation;
+	Quaternion endRotation = Quaternion.LookRotation(point, Vector3.back);
+		
+	transform.rotation = Quaternion.RotateTowards(startRotation, endRotation, rotationSpeed * Time.deltaTime);
+}
+
+--------------------------------------------------
+
+UserInputHandler.OnPanHeld += MoveTowardsTouch;
+
+--------------------------------------------------
+
+UserInputHandler.OnPanHeld -= MoveTowardsTouch;
+
+--------------------------------------------------
