@@ -1,3 +1,4 @@
+//when the user presses and drags on the screen. if the user removes too quickly then its considered as tap
 public delegate void PanBeganAction(Touch t);
 public static event PanBeganAction OnPanBegan;
 
@@ -9,11 +10,12 @@ public static event PanEndedAction OnPanEnded;
 
 --------------------------------------------------
 
-public float panMinTime = 0.4f;
+public float panMinTime = 0.4f;//tap gesture lasts more than minumum time
 
-private float startTime;
+private float startTime;//will keep time when our gesture begins
 
-private bool panGestureRecognized = false;
+
+private bool panGestureRecognized = false;// when we recognize gesture we gone make true
 
 --------------------------------------------------
 
@@ -21,7 +23,7 @@ startTime = Time.time;
 
 --------------------------------------------------
 
-if (!panGestureRecognized && Time.time - startTime > panMinTime)
+if (!panGestureRecognized && Time.time - startTime > panMinTime)//if current time and start time greater than min time 
 {
 	panGestureRecognized = true;
 	tapGestureFailed = true;
